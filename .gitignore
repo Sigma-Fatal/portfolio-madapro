@@ -1,0 +1,40 @@
+# Dépendances
+/node_modules
+/.pnp
+.pnp.js
+
+# Fichiers de build Next.js
+/.next/
+/out/
+
+# Fichiers de production
+/build
+
+# Fichiers de débogage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Variables d'environnement locales
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# Fichiers TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Systèmes d'exploitation
+.DS_Store
+Thumbs.db
+
+# IDE (VS Code, IntelliJ, etc.)
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,22 @@
+import React from "react";
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "MadaPro | Portfolio",
+  description: "Développeur Full Stack & Ingénieur IA",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="fr" className="scroll-smooth">
+      <body className="bg-[#0a0a0a] text-gray-300 antialiased font-sans">
+        {children}
+      </body>
+    </html>
+  );
+}

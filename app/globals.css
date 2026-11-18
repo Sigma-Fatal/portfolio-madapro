@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- STYLES DE BASE --- */
+:root {
+  --background: #0a0a0a;
+  --foreground: #e5e7eb;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif; /* Police système par défaut */
+  overflow-x: hidden; /* Évite le défilement horizontal causé par les animations */
+}
+
+/* --- ANIMATIONS PERSONNALISÉES --- */
+
+/* 1. Effet Shimmer (Balayage lumineux) pour votre nom complet */
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s linear infinite;
+}
+
+/* 2. Animation de flottement pour les icônes autour de la photo de profil */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-15px) translateX(5px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-5px) translateX(-5px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-10px) translateX(8px) rotate(3deg);
+  }
+}
+
+/* 3. Masquer la barre de défilement pour les miniatures de la galerie (esthétique) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
