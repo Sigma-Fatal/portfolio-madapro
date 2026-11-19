@@ -10,7 +10,7 @@ import {
   Download, Mail, Code2, Database, BrainCircuit, 
   ShoppingCart, LineChart, MapPin, Terminal, 
   Send, Briefcase, Cpu, GraduationCap, ShieldCheck, 
-  Wifi, Trophy, UserCheck, Bot, Sparkles, BookOpen, Camera, Github, CheckCircle2, Globe2, Rocket, User, FileText, Phone, MessageCircle
+  Wifi, Trophy, UserCheck, Bot, Sparkles, BookOpen, Camera, Github, CheckCircle2, Globe2, Rocket, User, FileText, Phone, MessageCircle, Menu, X
 } from 'lucide-react';
 
 // --- DONNÉES ---
@@ -41,12 +41,56 @@ const projectsData = [
 ];
 
 const timelineData = [
-  { year: "Nov 2026", title: "Communicant au 2e Colloque International INTERREG", inst: "ENS Antananarivo / École Doctorale PE2DI", desc: "Présentation orale : 'Plateforme de gestion de stocks scalable et sécurisée avec IA générative (RAG)'. Co-auteur : RAKOTOMALALA Hery Frédéric.", icon: <BrainCircuit className="w-5 h-5" /> },
-  { year: "2024-2026", title: "Master 2 en Management et Sécurité Informatique", inst: "ENSET Antsiranana", desc: "Spécialisation en sécurité des SI. Mémoire : Plateforme de gestion de stocks avec IA et cryptographie.", icon: <GraduationCap className="w-5 h-5" /> },
-  { year: "Mars 2026", title: "Enseignant Stagiaire en Mathématiques", inst: "Lycée Technique et Professionnel PK4 (LTP PK4)", desc: "Enseignement des suites numériques (3ème A MAA). Conception pédagogique et évaluations.", icon: <BookOpen className="w-5 h-5" /> },
-  { year: "Mars 2026", title: "Stagiaire en Administration Scolaire", inst: "LTPC-PK3", desc: "Immersion dans la direction d'un établissement : gestion des ressources et management scolaire.", icon: <UserCheck className="w-5 h-5" /> },
-  { year: "Août 2025", title: "Participant Hackathon RedShalk", inst: "InChargé Madagascar", desc: "Participation active au Hackathon de Diego Suarez.", icon: <Trophy className="w-5 h-5" /> },
-  { year: "2022-2023", title: "Licence en Informatique", inst: "ENSET Antsiranana", desc: "Fondamentaux du génie logiciel, des réseaux et des bases de données.", icon: <Terminal className="w-5 h-5" /> }
+  { 
+    year: "Nov 2026", 
+    title: "Communicant au 2e Colloque International INTERREG", 
+    inst: "ENS Antananarivo / École Doctorale PE2DI", 
+    desc: "Présentation orale : 'Plateforme de gestion de stocks scalable et sécurisée avec IA générative (RAG)'. Co-auteur : RAKOTOMALALA Hery Frédéric.", 
+    icon: <BrainCircuit className="w-5 h-5" /> 
+  },
+  { 
+    year: "2024-2026", 
+    title: "Master 2 en Management et Sécurité Informatique", 
+    inst: "ENSET Antsiranana", 
+    desc: "Spécialisation en sécurité des SI. Mémoire : Plateforme de gestion de stocks avec IA et cryptographie.", 
+    icon: <GraduationCap className="w-5 h-5" /> 
+  },
+  { 
+    year: "Mars 2026", 
+    title: "Enseignant Stagiaire en Mathématiques", 
+    inst: "Lycée Technique et Professionnel PK4 (LTP PK4)", 
+    desc: "Enseignement des suites numériques (3ème A MAA). Conception pédagogique et évaluations.", 
+    icon: <BookOpen className="w-5 h-5" /> 
+  },
+  { 
+    year: "Mars 2026", 
+    title: "Stagiaire en Administration Scolaire", 
+    inst: "LTPC-PK3", 
+    desc: "Immersion dans la direction d'un établissement : gestion des ressources et management scolaire.", 
+    icon: <UserCheck className="w-5 h-5" /> 
+  },
+  { 
+    year: "Août 2025", 
+    title: "Participant Hackathon RedShalk", 
+    inst: "InChargé Madagascar", 
+    desc: "Participation active au Hackathon de Diego Suarez.", 
+    icon: <Trophy className="w-5 h-5" /> 
+  },
+  // NOUVELLE ENTRÉE ICI
+  { 
+    year: "2022-2023", 
+    title: "Enseignant Stagiaire en Mathématiques & Informatique", 
+    inst: "Collège AVOTRA Morafeno (Antsiranana)", 
+    desc: "Enseignement des Puissances de 10 au niveau 4ème et initiation à l'informatique. Conception de supports pédagogiques et évaluation des élèves.", 
+    icon: <BookOpen className="w-5 h-5" /> 
+  },
+  { 
+    year: "2022-2023", 
+    title: "Licence en Informatique", 
+    inst: "ENSET Antsiranana", 
+    desc: "Fondamentaux du génie logiciel, des réseaux et des bases de données.", 
+    icon: <Terminal className="w-5 h-5" /> 
+  }
 ];
 
 const galleryData = [
@@ -76,9 +120,8 @@ const navLinks = [
 export default function Portfolio() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [activeSection, setActiveSection] = useState('hero');
-  
-  // État pour gérer l'ouverture de la modale CV
   const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,14 +174,43 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* Bouton CV qui ouvre la modale d'information */}
           <button 
             onClick={() => setIsCvModalOpen(true)} 
             className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg transition-all shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] cursor-pointer"
           >
             <Download className="w-4 h-4" /> Télécharger CV
           </button>
+
+          <button 
+            className="lg:hidden p-2 text-white"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+          </button>
         </div>
+
+        {isMobileMenuOpen && (
+          <div className="lg:hidden absolute top-20 left-0 w-full bg-[#0a0a0a] border-b border-white/10 shadow-xl flex flex-col p-6 gap-4">
+            {navLinks.map((link) => (
+              <a 
+                key={link.name} 
+                href={link.href} 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`text-lg font-medium py-2 border-b border-white/5 ${
+                  activeSection === link.href.substring(1) ? 'text-green-400' : 'text-gray-300'
+                }`}
+              >
+                {link.name}
+              </a>
+            ))}
+            <button 
+              onClick={() => { setIsMobileMenuOpen(false); setIsCvModalOpen(true); }} 
+              className="mt-4 flex items-center justify-center gap-2 px-5 py-3 bg-green-600 text-white font-medium rounded-lg w-full"
+            >
+              <Download className="w-5 h-5" /> Télécharger CV
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* HERO SECTION */}
@@ -176,11 +248,9 @@ export default function Portfolio() {
               </div>
             </Reveal>
 
-            {/* PHOTO + ICONES FLOTTANTES */}
             <div className="relative h-[500px] flex items-center justify-center">
               <div className="absolute inset-0 bg-green-500/20 rounded-full blur-[80px]"></div>
               
-              {/* Icônes flottantes */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="absolute top-[10%] left-[10%] animate-[float_4s_ease-in-out_infinite]">
                   <div className="w-14 h-14 bg-[#141414] border border-white/10 rounded-xl p-2 shadow-lg backdrop-blur-sm"><Image src="/React_Logo_SVG.svg" alt="React" width={40} height={40} className="object-contain" /></div>
