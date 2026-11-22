@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 
-// On définit la structure du code ligne par ligne avec les couleurs
 const codeLines = [
   [{ text: "const ", color: "text-pink-400" }, { text: "Developer", color: "text-blue-300" }, { text: " = () => {", color: "text-gray-300" }],
   [{ text: "  return (", color: "text-pink-400" }],
@@ -21,50 +20,42 @@ export default function DraggableCodeWindow() {
   
   const totalChars = codeLines.reduce((acc, line) => acc + line.reduce((sum, segment) => sum + segment.text.length, 0) + 1, 0);
   const [charCount, setCharCount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Détection de la taille de l'écran pour ajuster la position initiale
+  // Positionnement initial
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        // Sur Mobile : on le place plus bas (y: 380) pour ne pas cacher le visage
         setPosition({ x: 10, y: 380 }); 
       } else {
-        // Sur PC : on garde la position initiale
         setPosition({ x: -120, y: -40 });
       }
     };
-
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Logique d'animation de frappe
+  // Logique d'animation de frappe (Boucle infinie)
   useEffect(() => {
-    let isDeleting = false;
-    let timeoutId: NodeJS.Timeout;
+    let timeout: NodeJS.Timeout;
 
-    const typeLoop = () => {
-      if (!isDeleting && charCount < totalChars) {
-        setCharCount(prev => prev + 1);
-        timeoutId = setTimeout(typeLoop, 30);
-      } else if (!isDeleting && charCount === totalChars) {
-        timeoutId = setTimeout(() => {
-          isDeleting = true;
-          typeLoop();
-        }, 2000);
-      } else if (isDeleting && charCount > 0) {
-        setCharCount(prev => prev - 1);
-        timeoutId = setTimeout(typeLoop, 15);
-      } else if (isDeleting && charCount === 0) {
-        isDeleting = false;
-        timeoutId = setTimeout(typeLoop, 500);
-      }
-    };
+    if (!isDeleting && charCount < totalChars) {
+      // En train d'écrire
+      timeout = setTimeout(() => setCharCount(prev => prev + 1), 30);
+    } else if (!isDeleting && charCount === totalChars) {
+      // Fin de l'écriture : on attend 3 secondes puis on passe en mode effacement
+      timeout = setTimeout(() => setIsDeleting(true), 3000);
+    } else if (isDeleting && charCount > 0) {
+      // En train d'effacer
+      timeout = setTimeout(() => setCharCount(prev => prev - 1), 15);
+    } else if (isDeleting && charCount === 0) {
+      // Fin de l'effacement : on attend 500ms puis on repasse en mode écriture
+      timeout = setTimeout(() => setIsDeleting(false), 500);
+    }
 
-    typeLoop();
-    return () => clearTimeout(timeoutId);
-  }, [charCount, totalChars]);
+    return () => clearTimeout(timeout);
+  }, [charCount, isDeleting, totalChars]);
 
   const onMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true);

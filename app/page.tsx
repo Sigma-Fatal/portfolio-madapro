@@ -14,6 +14,15 @@ import {
   Wifi, Trophy, UserCheck, Bot, Sparkles, BookOpen, Camera, Github, CheckCircle2, Globe2, Rocket, User, FileText, Phone, MessageCircle, Menu, X, Check
 } from 'lucide-react';
 
+
+
+// Icône Facebook personnalisée (car Lucide ne l'a plus)
+const FacebookIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
+
 // --- DONNÉES (Identiques) ---
 const techIcons = [
   { name: "React", img: "/React_Logo_SVG.svg" },
@@ -118,6 +127,17 @@ export default function Portfolio() {
               <Image src="/MadaPro_logo.jpg" alt="Logo" fill className="object-cover" />
             </div>
             <span className="text-2xl font-bold text-white tracking-tighter">MadaPro</span>
+          </div>
+                          <div className="flex items-center justify-center gap-4 mt-6">
+                  <a href="https://github.com/Sigma-Fatal" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 hover:bg-green-500/20 rounded-full text-gray-400 hover:text-green-400 transition-all">
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a href="https://www.facebook.com/profile.php?id=61571650380875" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 hover:bg-blue-500/20 rounded-full text-gray-400 hover:text-blue-400 transition-all">
+                    <FacebookIcon className="w-5 h-5" />
+                  </a>
+                  <a href="mailto:rabemananjaradelmas@gmail.com" className="p-2 bg-white/5 hover:bg-red-500/20 rounded-full text-gray-400 hover:text-red-400 transition-all">
+                    <Mail className="w-5 h-5" />
+                  </a>
           </div>
           
           <div className="hidden lg:flex gap-6 text-sm font-medium">
@@ -555,6 +575,19 @@ export default function Portfolio() {
                     <div>
                       <p className="text-sm font-medium text-gray-400">GitHub</p>
                       <p className="text-sm font-bold text-white group-hover:text-green-400 transition-colors">github.com/Sigma-Fatal</p>
+                    </div>
+                  </a>
+
+                                    <a 
+                    href="https://www.facebook.com/profile.php?id=61571650380875" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center gap-4 p-4 rounded-xl bg-[#141414] border border-white/5 hover:border-green-500/30 hover:bg-[#1a1a1a] transition-all group"
+                  >
+                    <FacebookIcon className="w-6 h-6 text-blue-500 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <p className="text-sm font-medium text-white">Facebook</p>
+                      <p className="text-sm text-gray-400 group-hover:text-blue-400 transition-colors">MadaPro</p>
                     </div>
                   </a>
                 </div>
