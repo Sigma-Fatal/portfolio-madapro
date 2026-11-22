@@ -2,57 +2,69 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 
+// On définit la structure du code ligne par ligne avec les couleurs
+const codeLines = [
+  [{ text: "const ", color: "text-pink-400" }, { text: "Developer", color: "text-blue-300" }, { text: " = () => {", color: "text-gray-300" }],
+  [{ text: "  return (", color: "text-pink-400" }],
+  [{ text: "    <", color: "text-gray-400" }, { text: "div", color: "text-green-400" }, { text: " className=", color: "text-yellow-300" }, { text: "\"passion\"", color: "text-orange-300" }, { text: ">", color: "text-gray-400" }],
+  [{ text: "      <", color: "text-gray-400" }, { text: "h1", color: "text-green-400" }, { text: ">", color: "text-gray-400" }, { text: "Build solutions", color: "text-gray-300" }, { text: "</", color: "text-gray-400" }, { text: "h1", color: "text-green-400" }, { text: ">", color: "text-gray-400" }],
+  [{ text: "      <", color: "text-gray-400" }, { text: "p", color: "text-green-400" }, { text: ">", color: "text-gray-400" }, { text: "for a better tomorrow", color: "text-gray-300" }, { text: "</", color: "text-gray-400" }, { text: "p", color: "text-green-400" }, { text: ">", color: "text-gray-400" }],
+  [{ text: "    </", color: "text-gray-400" }, { text: "div", color: "text-green-400" }, { text: ">", color: "text-gray-400" }],
+  [{ text: "  );", color: "text-pink-400" }],
+  [{ text: "}", color: "text-gray-300" }],
+];
+
 export default function DraggableCodeWindow() {
-  // Position par défaut (Desktop)
   const [position, setPosition] = useState({ x: -120, y: -40 });
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   
-  const [displayedCode, setDisplayedCode] = useState('');
-  const fullCode = `const Developer = () => {\n  return (\n    <div className="passion">\n      <h1>Build solutions</h1>\n      <p>for a better tomorrow</p>\n    </div>\n  );\n}`;
+  const totalChars = codeLines.reduce((acc, line) => acc + line.reduce((sum, segment) => sum + segment.text.length, 0) + 1, 0);
+  const [charCount, setCharCount] = useState(0);
 
   // Détection de la taille de l'écran pour ajuster la position initiale
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        // Sur Mobile : on le place tout en bas pour ne pas cacher le visage
-        setPosition({ x: 10, y: 280 }); 
+        // Sur Mobile : on le place plus bas (y: 380) pour ne pas cacher le visage
+        setPosition({ x: 10, y: 380 }); 
       } else {
         // Sur PC : on garde la position initiale
         setPosition({ x: -120, y: -40 });
       }
     };
 
-    handleResize(); // Applique au chargement
-    window.addEventListener('resize', handleResize); // Applique si on redimensionne
+    handleResize();
+    window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Logique d'animation de frappe
   useEffect(() => {
-    let currentIndex = 0;
     let isDeleting = false;
     let timeoutId: NodeJS.Timeout;
 
     const typeLoop = () => {
-      if (!isDeleting && currentIndex <= fullCode.length) {
-        setDisplayedCode(fullCode.slice(0, currentIndex));
-        currentIndex++;
-        timeoutId = setTimeout(typeLoop, currentIndex === fullCode.length ? 2000 : 30);
-      } else if (isDeleting && currentIndex >= 0) {
-        setDisplayedCode(fullCode.slice(0, currentIndex));
-        currentIndex--;
+      if (!isDeleting && charCount < totalChars) {
+        setCharCount(prev => prev + 1);
+        timeoutId = setTimeout(typeLoop, 30);
+      } else if (!isDeleting && charCount === totalChars) {
+        timeoutId = setTimeout(() => {
+          isDeleting = true;
+          typeLoop();
+        }, 2000);
+      } else if (isDeleting && charCount > 0) {
+        setCharCount(prev => prev - 1);
         timeoutId = setTimeout(typeLoop, 15);
-      } else {
-        isDeleting = !isDeleting;
-        if (!isDeleting) currentIndex = 0;
+      } else if (isDeleting && charCount === 0) {
+        isDeleting = false;
         timeoutId = setTimeout(typeLoop, 500);
       }
     };
 
     typeLoop();
     return () => clearTimeout(timeoutId);
-  }, []);
+  }, [charCount, totalChars]);
 
   const onMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true);
@@ -66,26 +78,20 @@ export default function DraggableCodeWindow() {
       if (!isDragging) return;
       const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
       const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-      
-      // Limites pour ne pas sortir de l'écran
       const maxX = window.innerWidth - 150;
       const maxY = window.innerHeight - 100;
-      
       setPosition({
         x: Math.max(0, Math.min(clientX - dragRef.current.x, maxX)),
         y: Math.max(0, Math.min(clientY - dragRef.current.y, maxY)),
       });
     };
-
     const onUp = () => setIsDragging(false);
-
     if (isDragging) {
       window.addEventListener('mousemove', onMove);
       window.addEventListener('mouseup', onUp);
       window.addEventListener('touchmove', onMove, { passive: false });
       window.addEventListener('touchend', onUp);
     }
-
     return () => {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
@@ -94,16 +100,61 @@ export default function DraggableCodeWindow() {
     };
   }, [isDragging]);
 
+  const renderCode = () => {
+    let remainingChars = charCount;
+    let isCursorDisplayed = false;
+
+    return codeLines.map((line, lineIndex) => {
+      if (remainingChars <= 0) {
+        return <div key={lineIndex} className="h-[1.25em]"></div>;
+      }
+
+      const lineSegments = [];
+      let lineCharsCount = 0;
+
+      for (const segment of line) {
+        if (remainingChars > 0) {
+          const charsToShow = Math.min(segment.text.length, remainingChars);
+          lineSegments.push(
+            <span key={lineCharsCount} className={segment.color}>
+              {segment.text.slice(0, charsToShow)}
+            </span>
+          );
+          remainingChars -= charsToShow;
+          lineCharsCount += charsToShow;
+        } else {
+          break;
+        }
+      }
+
+      const cursorHere = remainingChars === 0 && !isCursorDisplayed;
+      if (cursorHere) isCursorDisplayed = true;
+      
+      if (lineIndex < codeLines.length - 1 && remainingChars > 0) {
+        remainingChars -= 1;
+      }
+
+      return (
+        <div key={lineIndex} className="whitespace-pre h-[1.25em] md:h-[1.5em]">
+          {lineSegments}
+          {cursorHere && (
+            <span className="inline-block w-1 md:w-1.5 h-3 md:h-4 bg-green-500 animate-pulse ml-0.5 align-middle"></span>
+          )}
+        </div>
+      );
+    });
+  };
+
   return (
     <div
-      className={`absolute z-30 bg-[#141414]/95 backdrop-blur-md border border-white/10 p-2 md:p-4 rounded-xl shadow-2xl transition-shadow duration-200 w-40 md:w-80 ${
+      className={`absolute z-30 bg-[#141414]/95 backdrop-blur-md border border-white/10 p-2 md:p-4 rounded-xl shadow-2xl transition-shadow duration-200 w-52 md:w-80 ${
         isDragging ? 'cursor-grabbing scale-105' : 'cursor-grab hover:border-green-500/50'
       }`}
       style={{ 
         left: `${position.x}px`, 
         top: `${position.y}px`,
         userSelect: isDragging ? 'none' : 'auto',
-        touchAction: 'none' // Empêche le scroll de la page quand on déplace la fenêtre
+        touchAction: 'none'
       }}
       onMouseDown={onMouseDown}
       onTouchStart={onMouseDown}
@@ -115,15 +166,10 @@ export default function DraggableCodeWindow() {
         <span className="text-[9px] md:text-xs text-gray-500 ml-1 md:ml-2 font-mono">Delmas.tsx</span>
       </div>
       
-      <div className="font-mono text-[8px] md:text-sm text-gray-300 h-24 md:h-40 overflow-hidden relative leading-tight md:leading-normal">
-        <pre className="whitespace-pre-wrap pointer-events-none">
-          {displayedCode.split('\n').map((line, i) => (
-            <div key={i} className="whitespace-pre-wrap">
-              {line}
-            </div>
-          ))}
-          <span className="inline-block w-1 h-2 md:w-2 md:h-4 bg-green-500 animate-pulse ml-0.5 align-middle"></span>
-        </pre>
+      <div className="font-mono text-[8px] md:text-sm text-gray-300 h-28 md:h-44 overflow-hidden relative leading-tight md:leading-normal">
+        <div className="pointer-events-none">
+          {renderCode()}
+        </div>
       </div>
     </div>
   );
